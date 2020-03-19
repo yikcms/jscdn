@@ -1,0 +1,77 @@
+ <meta http-equiv="Content-Type" content="text/html; charset=utf-8" /> 
+ 
+ <link rel="stylesheet" href="./DPlayer.min.css">
+ <style type="text/css">
+    body,html{width:100%;height:100%;background:#000;padding:0;margin:0;overflow-x:hidden;overflow-y:hidden}
+    *{margin:0;border:0;padding:0;text-decoration:none}
+    #stats{position:fixed;top:5px;left:10px;font-size:12px;color:#fdfdfd;z-index:2147483647;text-shadow:1px 1px 1px #000, 1px 1px 1px #000}
+    #dplayer{position:inherit}
+</style>
+<div id="dplayer"></div>
+<div id="stats"></div>
+<script src="./cdnbye.js"></script>
+<script src="./p2p.js"></script>
+<script src="./flv.js"></script>
+<script src="./md5.js"></script>
+<script>  
+function GetQueryString(key){
+    // 获取参数
+    var url = window.location.search;
+    // 正则筛选地址栏
+    var reg = new RegExp("(^|&)"+ key +"=([^&]*)(&|$)");
+    // 匹配目标参数
+    var result = url.substr(1).match(reg);
+    //返回参数值
+    return result ? decodeURIComponent(result[2]) : null;
+}
+var u=GetQueryString("url");
+const dp = new DPlayer({
+        container: document.getElementById('dplayer'),
+        autoplay: true,
+        screenshot: true,       // 开启截图，如果开启，视频和视频封面需要开启跨域
+        lang: 'zh-cn',          // 可选值: 'en', 'zh-cn', 'zh-tw'
+        autoplay: true,         // 视频自动播放
+        theme: '#d28af4',       // 主题色
+        preload: 'metadata',        // 预加载，可选值: 'none', 'metadata', 'auto'
+        volume: '0.7',	        // 默认音量，请注意播放器会记忆用户设置，用户手动设置音量后默认音量即失效
+        loop: false,            // 视频循环播放
+        mutex: 	true,           // 互斥，阻止多个播放器同时播放，当前播放器播放时暂停其他播放器
+        defaultQuality: 0,      // 设置视频网址和视频类型video.quality，设置默认质量video.defaultQuality。
+        video: {
+            url: u,
+            type: 'auto'
+        },
+       // danmaku: {
+        //  id: "yk-"+hex_md5(u),
+         // api: 'https://api.prprpr.me/dplayer/'
+       // },
+        hlsjsConfig: {
+//            debug: false,
+            // Other hlsjsConfig options provided by hls.js
+            p2pConfig: {
+                logLevel: true,
+                // Other p2pConfig options provided by CDNBye
+                // https://docs.cdnbye.com/#/API
+            }
+        }
+    });
+var _peerId = '', _peerNum = 0, _totalP2PDownloaded = 0, _totalP2PUploaded = 0;
+    dp.on('stats', function (stats) {
+        _totalP2PDownloaded = stats.totalP2PDownloaded;
+        _totalP2PUploaded = stats.totalP2PUploaded;
+        updateStats();
+    });
+    dp.on('peerId', function (peerId) {
+        _peerId = peerId;
+    });
+    dp.on('peers', function (peers) {
+        _peerNum = peers.length;
+        updateStats();
+    });
+
+    function updateStats() {
+        var text = '正在为您P2P加速' + (_totalP2PDownloaded/1024).toFixed(2)
+            + 'MB 已分享' + (_totalP2PUploaded/1024).toFixed(2) + 'MB' + ' 连接节点' + _peerNum + '个';
+        document.getElementById('stats').innerText = text
+    }
+</script>
