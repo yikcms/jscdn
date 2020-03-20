@@ -3,7 +3,7 @@
 
 body{background-color: #28162c; color: #eee;}
 
-body:before{ content: ""; position: fixed; z-index: -1; top: 0; left: 0; right: 0; bottom: 0;background: url(https://s1.ax1x.com/2018/04/26/C31wWj.jpg) center 0 no-repeat;} 
+body:before{ content: ""; position: fixed; z-index: -1; top: 0; left: 0; right: 0; bottom: 0;background: url(../images/bg.jpg) center 0 no-repeat;} 
 
 h1, h2, h3, h4, h5, h6,a{ color: #eee;}
 
