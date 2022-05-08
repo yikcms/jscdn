@@ -1,1 +1,1 @@
-var apiurl="http://43.138.225.235/paipan/";
+var apiurl="https://1syan.com/paipan/";
